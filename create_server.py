@@ -15,13 +15,23 @@ cloud = openstack.connect(cloud='engineering')
 # The image and flavor is specific to the OpenStack service.
 # See the flavors_and_images.py example on how to list the available 
 # images and flavors
-cloud_server = cloud.create_server('openstack-example-test',
-                                   image='openSUSE-Leap-15.0-OpenStack.x86_64',
+
+cloud_image = cloud.get_image('apappas_refhost_image');
+if cloud_image is None:
+    cloud_image = cloud.create_image('apappas_refhost_image',
+                                   filename ='SLES12-SP4-JeOS.x86_64-12.4-OpenStack-Cloud-GM.qcow2',
+                                   disk_format='qcow'
+                                  );
+
+cloud_server = cloud.get_server('openstack-example-test');
+if cloud_server is None:
+    cloud_server = cloud.create_server('openstack-example-test',
+                                   image='apappas_refhost_image',
                                    flavor=dict(id='22'),
                                    wait=True,
-                                   auto_ip=True)
+                                   auto_ip=True);
 
 # Find a server by name
 cloud_server = cloud.get_server('openstack-example-test')
 
-cloud.pprint(cloud_server)
+cloud.print(cloud_server)
