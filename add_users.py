@@ -35,7 +35,16 @@ g.mount('/dev/sda3','/');
 g.download('/etc/cloud/cloud.cfg','cloud.cfg');
 subprocess.call("sed 's/^disable_root:[^:]\+/disable_root: false/' cloud.cfg > cloud.cfg.new",shell=True);
 g.upload('cloud.cfg.new', '/etc/cloud/cloud.cfg');
-g.mkdir('/root/.ssh');
+try:
+    g.mkdir('/root/.ssh/');
+except RuntimeError as e:    
+    if e.args[0].find('File exists') > 0 :
+        g.rm_rf('/root/.ssh/')
+        g.mkdir('/root/.ssh/');
+    else:
+        print('Unrecoverable error.');
+        print(e.args[0]);
+        raise       
 g.chmod(0o700,'/root/.ssh');
 g.upload(authorized_keys,'/root/.ssh/authorized_keys');
 g.chmod(0o600,'/root/.ssh/authorized_keys');
