@@ -20,21 +20,24 @@ original_image = image_name;
 image_name = image_name + 'edited';
 copy(original_image, image_name);
 
-if os.path.isfile('authorized_keys'):
-    os.remove('authorized_keys');
 
-wget.download('http://qam.suse.de/downloads/authorized_keys');
-    
+authorized_keys = os.path.abspath('authorized_keys');
+if os.path.isfile(authorized_keys):
+    os.remove(authorized_keys);
+wget.download('http://qam.suse.de/downloads/authorized_keys',
+              out=authorized_keys);
+             
+
 g = guestfs.GuestFS(python_return_dict=True);
 g.add_drive(image_name);
 g.launch();
 g.mount('/dev/sda3','/');
-g.download('/etc/cloud/cloud.cfg','/tmp/cloud.cfg');
-subprocess.call("sed 's/^disable_root:[^:]\+/disable_root: false/' /tmp/cloud.cfg > /tmp/cloud.cfg.new",shell=True);
-g.upload('/tmp/cloud.cfg.new', '/tmp/cloud.cfg.new');
+g.download('/etc/cloud/cloud.cfg','cloud.cfg');
+subprocess.call("sed 's/^disable_root:[^:]\+/disable_root: false/' cloud.cfg > cloud.cfg.new",shell=True);
+g.upload('cloud.cfg.new', '/etc/cloud/cloud.cfg');
 g.mkdir('/root/.ssh');
 g.chmod(0o700,'/root/.ssh');
-g.upload('authorized_keys','/root/.ssh/authorized_keys');
+g.upload(authorized_keys,'/root/.ssh/authorized_keys');
 g.chmod(0o600,'/root/.ssh/authorized_keys');
-
+g.close();
     
