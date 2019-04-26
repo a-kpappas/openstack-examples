@@ -44,7 +44,7 @@ except RuntimeError as e:
     else:
         print('Unrecoverable error.');
         print(e.args[0]);
-        raise       
+        raise e;   
 g.chmod(0o700,'/root/.ssh');
 g.upload(authorized_keys,'/root/.ssh/authorized_keys');
 g.chmod(0o600,'/root/.ssh/authorized_keys');
