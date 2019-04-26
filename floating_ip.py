@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
+#This needs to be turned in to a function with these params.
+server_name = 'apappas-refhost-test';
 import openstack
 
 # Initialize and turn on debug logging
@@ -10,7 +11,7 @@ openstack.enable_logging(debug=True)
 cloud = openstack.connect(cloud='engineering')
 
 
-cloud_server = cloud.get_server('openstack-example-test')
+cloud_server = cloud.get_server(server_name)
 
 # List available floating IPs
 f_ip=cloud.available_floating_ip(network='floating')
@@ -19,7 +20,19 @@ print("Available floating IP %s" % floating_ip)
 
 # Create a floating IP in the network.
 # The network ID is retrieved by the flavors_images_networks.py
-f_ip = cloud.network.create_ip(floating_network_id='b0f4710a-10bd-4650-96fa-cf12f8f85ec3')
+
+netlist = cloud.network.networks();
+f_identity = None;
+for net in netlist:
+    if net.name=='floating':
+        f_identity = net.id;
+    break
+
+if f_identity is None:
+    raise ValueError("Couldn't find floating ip id!");
+    
+
+f_ip = cloud.network.create_ip(floating_network_id=f_identity)
 f_ip_address = f_ip.floating_ip_address
 print("Created floating IP %s" % f_ip_address)
 
