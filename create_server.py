@@ -3,7 +3,7 @@
 
 #This needs to be turned in to a function with these params.
 server_name = 'apappas-refhost-test';
-image_name = 'edited.qcow2';
+image_name = 'apappas_refhost_image';
 import openstack
 
 # Initialize and turn on debug logging
@@ -20,11 +20,7 @@ cloud = openstack.connect(cloud='engineering')
 # images and flavors
 cloud_server = cloud.get_server(server_name);
 if cloud_server is None:
-    cloud_server = cloud.create_server(server_name,
-                                       image=image_name,
-                                       flavor=dict(id='22'),
-                                       wait=True,
-                                       auto_ip=True);
+    cloud_server = cloud.create_server(server_name,image=image_name,flavor=dict(id='22'),wait=True,auto_ip=True);
 
 # Find a server by name
 cloud.print(cloud_server)
