@@ -59,5 +59,4 @@ def prepare_image(image_name=""):
     g.close();
     os.remove('cloud.cfg');
     os.remove('cloud.cfg.new');    
-    
     return os.path.abspath(new_image)

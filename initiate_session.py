@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-def initiate_session(path=""):
+def initiate_session(path):
     from keystoneauth1 import loading
     from keystoneauth1 import session
     import yaml
     import os
    
-    if path=="":
+    if path=="" or not os.path.isfile(path):
         if os.path.isfile("clouds.yaml"):
             path = "clouds.yaml";
         elif os.path.isfile(os.path.expanduser('~/')+'.config/openstack/clouds.yaml'):
@@ -15,7 +15,7 @@ def initiate_session(path=""):
             path= "/etc/openstack/clouds.yaml";
         else:
             raise Exception("clouds.yaml not found.")
-
+            
     with open(path,'r') as stream:
             credentials = yaml.safe_load(stream)
     credentials = credentials["clouds"]["engineering"]["auth"]
